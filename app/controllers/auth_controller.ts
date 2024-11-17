@@ -29,4 +29,28 @@ export default class AuthController {
       return response.status(500).json({ message: 'Errore durante la registrazione' })
     }
   }
+
+  public async login({ request, response }: { request: any; response: any }) {
+    const { email, password } = request.body()
+    try {
+      // Check if user exists
+      const user = await User.findOne({ email })
+      if (!user) {
+        return response.status(400).json({ message: 'Credenziali invalide' })
+      }
+
+      // Check password
+      const isValidPassword = await bcrypt.compare(password, user.password)
+      if (!isValidPassword) {
+        return response.status(400).json({ message: 'Credenziali invalide' })
+      }
+
+      // Generate token
+      const token = jwt.sign({ id: user._id }, env.get('JWT_SECRET'), { expiresIn: '1h' })
+
+      return response.status(200).json({ token })
+    } catch (error) {
+      return response.status(500).json({ message: 'Errore durante il login' })
+    }
+  }
 }
