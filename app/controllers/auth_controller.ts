@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from '#models/user_model'
+import TokenBlacklist from '#models/token_blacklist'
 import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
 import env from '#start/env'
@@ -51,6 +52,21 @@ export default class AuthController {
       return response.status(200).json({ token })
     } catch (error) {
       return response.status(500).json({ message: 'Errore durante il login' })
+    }
+  }
+
+  public async logout({ request, response }: { request: any; response: any }) {
+    try {
+      const token = request.header('Authorization').replace('Bearer ', '')
+
+      // Aggiungi il token alla blacklist
+      const blacklistedToken = new TokenBlacklist({ token })
+      await blacklistedToken.save()
+
+      return response.status(200).json({ message: 'Logout effettuato con successo' })
+    } catch (error) {
+      console.error(error)
+      return response.status(500).json({ message: 'Errore durante il logout' })
     }
   }
 }
