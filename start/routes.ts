@@ -11,9 +11,15 @@
 import router from '@adonisjs/core/services/router'
 
 // Import controllers
+const AuthController = () => import('#controllers/auth_controller')
 const ConstructionSitesController = () => import('#controllers/construction_sites_controller')
 
 // API Routes
+router.post('/register', [AuthController, 'register'])
+router.post('/login', [AuthController, 'login'])
+router.post('/logout', [AuthController, 'logout'])
+
+// API routes
 router
   .group(() => {
     // Health check route
