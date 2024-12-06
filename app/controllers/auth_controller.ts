@@ -8,6 +8,10 @@ import env from '#start/env'
 dotenv.config()
 
 export default class AuthController {
+  /**
+   * Register a new user using email and password.
+   * @returns HTTP status code + message
+   */
   public async register({ request, response }: { request: any; response: any }) {
     const { email, password, firstName, lastName } = request.body()
     try {
@@ -30,7 +34,10 @@ export default class AuthController {
       return response.status(500).json({ message: 'Errore durante la registrazione' })
     }
   }
-
+  /**
+   * Login a user using email and password. If the user exists and the password is correct, a JWT token is generated.
+   * @returns HTTP status code + message + JWT token
+   */
   public async login({ request, response }: { request: any; response: any }) {
     const { email, password } = request.body()
     try {
